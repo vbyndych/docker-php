@@ -25,10 +25,10 @@ RUN apt-get update && apt-get install -y \
         npm \
      && ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so \
      && ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so \
-     && ln -s /usr/bin/nodejs /usr/bin/node
+     && ln -s /usr/bin/nodejs /usr/bin/node \
      && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql ldap mcrypt tidy \
      && docker-php-ext-enable opcache \
-     && pecl install xdebug && docker-php-ext-enable xdebug
+     && pecl install xdebug && docker-php-ext-enable xdebug \
      && npm install --global bower
 
 COPY php.ini /usr/local/etc/php
@@ -40,9 +40,9 @@ RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
  && php -r "if (hash('SHA384', file_get_contents('/tmp/composer-setup.php')) !== trim(file_get_contents('/tmp/composer-setup.sig'))) { unlink('/tmp/composer-setup.php'); echo 'Invalid installer' . PHP_EOL; exit(1); }" \
  && php /tmp/composer-setup.php --no-ansi --version=1.2.2 --install-dir=/usr/local/bin --filename=composer --snapshot \
  && rm -rf /tmp/composer-setup.php \
- && mkdir /var/www/.composer
- && chown www-data:www-data /var/www/.composer
- && curl -o /usr/local/bin/phpcs https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+ && mkdir /var/www/.composer \
+ && chown www-data:www-data /var/www/.composer \
+ && curl -o /usr/local/bin/phpcs https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
  && wget -O /usr/local/bin/phpmd -c http://static.phpmd.org/php/latest/phpmd.phar
 
 USER www-data
@@ -50,5 +50,4 @@ RUN /usr/local/bin/composer global require "fxp/composer-asset-plugin:~1.2"
 USER root
 
 RUN usermod -u 1000 www-data
-
 
