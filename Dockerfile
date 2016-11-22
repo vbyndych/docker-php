@@ -43,7 +43,7 @@ RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
  && mkdir /var/www/.composer \
  && chown www-data:www-data /var/www/.composer \
  && curl -o /usr/local/bin/phpcs https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
- && wget -O /usr/local/bin/phpmd -c http://static.phpmd.org/php/latest/phpmd.phar
+ && curl -o /usr/local/bin/phpmd http://static.phpmd.org/php/latest/phpmd.phar
 
 USER www-data
 RUN /usr/local/bin/composer global require "fxp/composer-asset-plugin:~1.2"
