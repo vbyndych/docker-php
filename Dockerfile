@@ -20,13 +20,15 @@ RUN apt-get update && apt-get install -y \
         libldb-dev \
         libldap2-dev \
         libtidy-dev \
+        libpq-dev \
         git \
         nodejs \
         npm \
      && ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so \
      && ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so \
      && ln -s /usr/bin/nodejs /usr/bin/node \
-     && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql ldap mcrypt tidy \
+     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+     && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql pdo_pgsql ldap mcrypt tidy \
      && docker-php-ext-enable opcache \
      && pecl install xdebug && docker-php-ext-enable xdebug \
      && npm install --global bower
