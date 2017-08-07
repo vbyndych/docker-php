@@ -31,7 +31,13 @@ RUN apt-get update && apt-get install -y \
      && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql pdo_pgsql ldap mcrypt tidy \
      && docker-php-ext-enable opcache \
      && pecl install xdebug && docker-php-ext-enable xdebug \
-     && npm install --global bower
+     && npm install --global bower \
+     && version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
+     && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
+     && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
+     && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
+     && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini
+
 
 COPY php.ini /usr/local/etc/php
 COPY xdebug.ini /usr/local/etc/php/conf.d/
@@ -43,11 +49,10 @@ RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
  && php /tmp/composer-setup.php --no-ansi --version=1.2.2 --install-dir=/usr/local/bin --filename=composer --snapshot \
  && rm -rf /tmp/composer-setup.php \
  && mkdir /var/www/.composer \
- && chown www-data:www-data /var/www/.composer 
+ && chown www-data:www-data /var/www/.composer
 
 USER www-data
 RUN /usr/local/bin/composer global require "fxp/composer-asset-plugin:~1.2"
 USER root
 
 RUN usermod -u 1000 www-data
-
