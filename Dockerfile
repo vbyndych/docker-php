@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
         libldap2-dev \
         libtidy-dev \
         libpq-dev \
+        libjpeg62-turbo-dev \
         git \
         nodejs \
         npm \
@@ -28,6 +29,7 @@ RUN apt-get update && apt-get install -y \
      && ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so \
      && ln -s /usr/bin/nodejs /usr/bin/node \
      && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+     && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
      && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql pdo_pgsql ldap mcrypt tidy \
      && docker-php-ext-enable opcache \
      && pecl install xdebug && docker-php-ext-enable xdebug \
