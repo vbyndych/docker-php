@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y \
         libmhash2 \
         libmcrypt-dev \
         bzip2 \
+        unzip \
         libbz2-dev \
         libicu-dev \
         libgmp-dev \
