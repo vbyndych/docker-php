@@ -54,6 +54,12 @@ RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
  && mkdir /var/www/.composer \
  && chown www-data:www-data /var/www/.composer
 
+# Setup know_hosts for ORO packagist and Github
+RUN mkdir -m 0700 /var/www/.ssh \
+ && ssh-keyscan -t rsa github.com >> /var/www/.ssh/known_hosts \
+ && ssh-keyscan -t rsa packagist.orocrm.com >> /var/www/.ssh/known_hosts \
+ && chown -R www-data:www-data /var/www/.ssh
+
 USER www-data
 RUN /usr/local/bin/composer global require "fxp/composer-asset-plugin:~1.2"
 USER root
