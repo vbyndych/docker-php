@@ -14,3 +14,9 @@ php:
         - ./:/var/www/html/
     working_dir: /var/www/html
 ```
+
+## useful commands
+
+`php -d memory_limit=9G /usr/local/bin/composer update -vv`
+
+`php -d memory_limit=9G /usr/local/bin/composer update oro/redis-config -vv --with-dependencies --no-plugins --no-scripts`
