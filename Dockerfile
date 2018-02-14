@@ -61,7 +61,8 @@ RUN mkdir -m 0700 /var/www/.ssh \
  && chown -R www-data:www-data /var/www/.ssh
 
 USER www-data
-RUN /usr/local/bin/composer global require "fxp/composer-asset-plugin:~1.2"
+RUN /usr/local/bin/composer global require "fxp/composer-asset-plugin:~1.2" \
+ && /usr/local/bin/composer global require "hirak/prestissimo"
 USER root
 
 RUN usermod -u 1000 www-data
