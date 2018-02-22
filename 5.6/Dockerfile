@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y \
      && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
      && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql pdo_pgsql ldap mcrypt tidy \
      && docker-php-ext-enable opcache \
-     && pecl install xdebug && docker-php-ext-enable xdebug \
+     && pecl install xdebug-2.5.5 && docker-php-ext-enable xdebug \
      && npm install --global bower \
      && version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
      && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
