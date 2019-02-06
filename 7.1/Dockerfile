@@ -1,5 +1,8 @@
 FROM php:7.1-fpm
 
+ENV NODEJS_VERSION=10.x
+ENV COMPOSER_VERSION=1.8.3
+
 RUN apt-get update && apt-get install -y \
         libmhash2 \
         libmcrypt-dev \
@@ -10,7 +13,7 @@ RUN apt-get update && apt-get install -y \
         libgmp-dev \
         libpcre3-dev \
         libjpeg-dev \
-        libpng12-dev \
+        libpng-dev \
         libreadline6-dev \
         librecode-dev \
         libsqlite3-dev \
@@ -24,11 +27,11 @@ RUN apt-get update && apt-get install -y \
         libpq-dev \
         libjpeg62-turbo-dev \
         git \
-        nodejs \
-        npm \
+        gnupg \
      && ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so \
      && ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so \
-     && ln -s /usr/bin/nodejs /usr/bin/node \
+     && curl -sL https://deb.nodesource.com/setup_$NODEJS_VERSION | bash - \
+     && apt-get update && apt-get install -y nodejs \
      && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
      && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
      && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql pdo_pgsql ldap mcrypt tidy \
@@ -49,7 +52,7 @@ COPY xdebug.ini /usr/local/etc/php/conf.d/
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
  && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
  && php -r "if (hash('SHA384', file_get_contents('/tmp/composer-setup.php')) !== trim(file_get_contents('/tmp/composer-setup.sig'))) { unlink('/tmp/composer-setup.php'); echo 'Invalid installer' . PHP_EOL; exit(1); }" \
- && php /tmp/composer-setup.php --no-ansi --version=1.6.3 --install-dir=/usr/local/bin --filename=composer --snapshot \
+ && php /tmp/composer-setup.php --no-ansi --version=$COMPOSER_VERSION --install-dir=/usr/local/bin --filename=composer --snapshot \
  && rm -rf /tmp/composer-setup.php \
  && mkdir /var/www/.composer \
  && chown www-data:www-data /var/www/.composer

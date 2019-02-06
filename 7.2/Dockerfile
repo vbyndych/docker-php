@@ -1,7 +1,9 @@
 FROM php:7.2-fpm
 
-RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - \
-    && apt-get update && apt-get install -y \
+ENV NODEJS_VERSION=10.x
+ENV COMPOSER_VERSION=1.8.3
+
+RUN apt-get update && apt-get install -y \
         bzip2 \
         unzip \
         libbz2-dev \
@@ -23,17 +25,16 @@ RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - \
         libpq-dev \
         libjpeg62-turbo-dev \
         git \
-        nodejs \
-        npm \
+        gnupg \
      && ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so \
      && ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so \
-     && ln -s /usr/bin/nodejs /usr/bin/node \
+     && curl -sL https://deb.nodesource.com/setup_$NODEJS_VERSION | bash - \
+     && apt-get update && apt-get install -y nodejs \
      && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
      && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
      && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql pdo_pgsql ldap tidy \
      && docker-php-ext-enable opcache \
      && pecl install xdebug && docker-php-ext-enable xdebug \
-     && npm install --global bower \
      && version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
      && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
      && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
@@ -48,7 +49,7 @@ COPY xdebug.ini /usr/local/etc/php/conf.d/
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
  && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
  && php -r "if (hash('SHA384', file_get_contents('/tmp/composer-setup.php')) !== trim(file_get_contents('/tmp/composer-setup.sig'))) { unlink('/tmp/composer-setup.php'); echo 'Invalid installer' . PHP_EOL; exit(1); }" \
- && php /tmp/composer-setup.php --no-ansi --version=1.6.3 --install-dir=/usr/local/bin --filename=composer --snapshot \
+ && php /tmp/composer-setup.php --no-ansi --version=$COMPOSER_VERSION --install-dir=/usr/local/bin --filename=composer --snapshot \
  && rm -rf /tmp/composer-setup.php \
  && mkdir /var/www/.composer \
  && chown www-data:www-data /var/www/.composer
