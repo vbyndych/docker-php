@@ -1,7 +1,7 @@
 FROM php:7.2-fpm
 
 ENV NODEJS_VERSION=10.x
-ENV COMPOSER_VERSION=1.8.3
+ENV COMPOSER_VERSION=1.9.1
 
 RUN apt-get update && apt-get install -y \
         bzip2 \
@@ -39,7 +39,11 @@ RUN apt-get update && apt-get install -y \
      && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
      && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
      && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
-     && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini
+     && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini \
+     && mkdir -p /tmp/blackfire \
+     && curl -A "Docker" -L https://blackfire.io/api/v1/releases/client/linux_static/amd64 | tar zxp -C /tmp/blackfire \
+     && mv /tmp/blackfire/blackfire /usr/bin/blackfire \
+     && rm -Rf /tmp/blackfire*
 
 
 COPY php.ini /usr/local/etc/php
