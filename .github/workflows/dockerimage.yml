@@ -10,10 +10,16 @@ jobs:
     strategy:
       matrix:
         php_version: [7.1, 7.2, 7.3]
+        include:
+          - php_version: 7.3
+            latest: true
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag vbyndych/oro-docker-php:${{ matrix.php_version }} --build-arg PHP_VERSION=${{ matrix.php_version }}
+    - name: Tag latest version
+      if: matrix.latest
+      run: docker tag vbyndych/oro-docker-php:${{ matrix.php_version }} vbyndych/oro-docker-php:latest
     - name: Login to DockerHub Registry
       run: echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-stdin
       env:
@@ -21,3 +27,6 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.GITHUB_DOCKER_PASSWORD }}
     - name: Push image to Dockerhub
       run: docker push vbyndych/oro-docker-php:${{ matrix.php_version }}
+    - name: Push latest image to Dockerhub
+      if: matrix.latest
+      run: docker push vbyndych/oro-docker-php:latest
