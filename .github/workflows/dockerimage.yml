@@ -14,8 +14,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag vbyndych/oro-docker-php:${{ matrix.php_version }} --build-arg PHP_VERSION=${{ matrix.php_version }}
-    - name: Login to GitHub Docker Registry
-      run: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+    - name: Login to DockerHub Registry
+      run: echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-stdin
       env:
         DOCKER_USERNAME: ${{ secrets.GITHUB_DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.GITHUB_DOCKER_PASSWORD }}
