@@ -1,0 +1,18 @@
+name: Docker Image CI
+
+on: [push]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php_version: [7.1, 7.2, 7.3]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag vbyndych/oro-docker-php:${{ matrix.php_version }} --build-arg PHP_VERSION=${{ matrix.php_version }}
+    - name: Push image to Dockerhub
+      run: docker build . --file Dockerfile --tag vbyndych/oro-docker-php:${{ matrix.php_version }} --build-arg PHP_VERSION=${{ matrix.php_version }}
