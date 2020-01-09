@@ -1,14 +1,15 @@
 IMAGE_NAME=vbyndych/oro-docker-php
-TAG=latest
+TAG=7.4
 
-ifeq ($(TAG), 7.1)
-	DIR=7.1/
+ifeq ($(TAG), 7.4)
+	FILE=Dockerfile_7.4
 else
-	DIR=7.2/
+	FILE=Dockerfile
 endif
 
+
 build:
-	/usr/bin/docker build -t $(IMAGE_NAME):$(TAG) $(DIR)
+	/usr/bin/docker build --tag $(IMAGE_NAME):$(TAG) --file $(FILE) --build-arg PHP_VERSION=$(TAG) .
 	
 push:
 	/usr/bin/docker push $(IMAGE_NAME):$(TAG)

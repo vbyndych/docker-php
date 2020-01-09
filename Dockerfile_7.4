@@ -1,14 +1,14 @@
-FROM php:7.1-fpm
+ARG PHP_VERSION
+FROM php:$PHP_VERSION-fpm
 
 ENV NODEJS_VERSION=10.x
 ENV COMPOSER_VERSION=1.9.1
 
 RUN apt-get update && apt-get install -y \
-        libmhash2 \
-        libmcrypt-dev \
         bzip2 \
         unzip \
         libbz2-dev \
+        libzip-dev \
         libicu-dev \
         libgmp-dev \
         libpcre3-dev \
@@ -33,11 +33,10 @@ RUN apt-get update && apt-get install -y \
      && curl -sL https://deb.nodesource.com/setup_$NODEJS_VERSION | bash - \
      && apt-get update && apt-get install -y nodejs \
      && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-     && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
-     && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql pdo_pgsql ldap mcrypt tidy \
+     && docker-php-ext-configure gd --with-jpeg \
+     && docker-php-ext-install -j$(nproc) bz2 bcmath intl soap gd zip pdo_mysql pdo_pgsql ldap tidy \
      && docker-php-ext-enable opcache \
      && pecl install xdebug && docker-php-ext-enable xdebug \
-     && npm install --global bower \
      && version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
      && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
      && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \

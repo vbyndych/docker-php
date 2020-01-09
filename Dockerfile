@@ -1,4 +1,5 @@
-FROM php:7.2-fpm
+ARG PHP_VERSION
+FROM php:$PHP_VERSION-fpm
 
 ENV NODEJS_VERSION=10.x
 ENV COMPOSER_VERSION=1.9.1
@@ -7,6 +8,7 @@ RUN apt-get update && apt-get install -y \
         bzip2 \
         unzip \
         libbz2-dev \
+        libzip-dev \
         libicu-dev \
         libgmp-dev \
         libpcre3-dev \
