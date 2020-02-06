@@ -2,7 +2,7 @@ ARG PHP_VERSION
 FROM php:$PHP_VERSION-fpm
 
 ENV NODEJS_VERSION=10.x
-ENV COMPOSER_VERSION=1.9.1
+ENV COMPOSER_VERSION=1.9.3
 
 RUN apt-get update && apt-get install -y \
         bzip2 \
