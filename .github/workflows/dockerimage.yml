@@ -24,6 +24,8 @@ jobs:
       uses: anchore/scan-action@master
       with:
         image-reference: "vbyndych/oro-docker-php:${{ matrix.php_version }}"
+        fail-build: true
+        include-app-packages: true
     - name: Upload Image Scan results
       uses: actions/upload-artifact@v1
       with:
