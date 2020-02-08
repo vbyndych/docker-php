@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php_version: [7.1, 7.2, 7.3]
+        php_version: [7.3] #[7.1, 7.2, 7.3]
         include:
           - php_version: 7.3
             latest: true
@@ -20,6 +20,15 @@ jobs:
     - name: Tag latest version
       if: matrix.latest
       run: docker tag vbyndych/oro-docker-php:${{ matrix.php_version }} vbyndych/oro-docker-php:latest
+    - name: Scan image
+      uses: anchore/scan-action@master
+      with:
+        image-reference: "localbuild/testimage:latest"
+    - name: Upload Image Scan results
+      uses: actions/upload-artifact@v1
+      with:
+        name: sacn-report
+        path: anchore-reports
     - name: Login to DockerHub Registry
       run: echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-stdin
       env:
