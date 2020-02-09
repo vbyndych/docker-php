@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php_version: [7.3] #[7.1, 7.2, 7.3]
+        php_version: [7.1, 7.2, 7.3]
         include:
           - php_version: 7.3
             latest: true
@@ -26,11 +26,15 @@ jobs:
         image-reference: "vbyndych/oro-docker-php:${{ matrix.php_version }}"
         fail-build: true
         include-app-packages: true
+    - name: ZIP Image Scan results
+      uses: montudor/action-zip@v0.1.0
+        with:
+          args: zip -qq -r ./scan-report.zip ./anchore-reports
     - name: Upload Image Scan results
       uses: actions/upload-artifact@v1
       with:
-        name: sacn-report
-        path: anchore-reports
+        name: sacn-report-${{ matrix.php_version }}
+        path: scan-report.zip
     - name: Login to DockerHub Registry
       run: echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-stdin
       env:
